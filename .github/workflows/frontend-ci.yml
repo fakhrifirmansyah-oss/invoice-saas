@@ -1,0 +1,41 @@
+name: Frontend CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # Karena project frontend ada di folder 'frontend', kita set working directory ke sana
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+    # 1. Download kode dari GitHub ke server CI/CD
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. Siapkan Node.js (seperti menginstall Node.js di server)
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+
+    # 3. Install semua library (seperti node_modules)
+    - name: Install Dependencies
+      run: npm install
+
+    # 4. Tes proses Build untuk memastikan tidak ada error pada kode
+    - name: Build Application
+      run: npm run build
+      env:
+        # Di sinilah server CI/CD mengambil Environment Variables dari Dashboard Secrets GitHub!
+        VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
