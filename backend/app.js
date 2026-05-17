@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const errorHandler = require('./middleware/error');
 const authRoutes = require('./routes/auth');
 const invoiceRoutes = require('./routes/invoices');
+const postRoutes = require('./routes/posts');
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/posts', postRoutes);
 
 app.use(errorHandler);
 
