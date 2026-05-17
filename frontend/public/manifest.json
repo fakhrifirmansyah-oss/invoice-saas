@@ -1,0 +1,22 @@
+{
+  "short_name": "FDBA Invoice",
+  "name": "FDBA Invoice Digital SuperApp",
+  "description": "Enterprise Billing, Real-Time Space Feed, and On-Demand Rider Logistics",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "display": "standalone",
+  "orientation": "portrait"
+}

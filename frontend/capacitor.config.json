@@ -1,0 +1,6 @@
+{
+  "appId": "com.fdbainvoicedigital.superapp",
+  "appName": "FDBA Invoice Digital",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
