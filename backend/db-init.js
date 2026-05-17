@@ -26,7 +26,7 @@ const createTables = async () => {
         client_name VARCHAR(100) NOT NULL,
         client_email VARCHAR(100),
         status VARCHAR(20) DEFAULT 'unpaid',
-        total DECIMAL(10, 2) NOT NULL,
+        total DECIMAL(20, 2) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
@@ -35,7 +35,7 @@ const createTables = async () => {
         invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
         description VARCHAR(255) NOT NULL,
         quantity INTEGER NOT NULL,
-        price DECIMAL(10, 2) NOT NULL
+        price DECIMAL(20, 2) NOT NULL
       );
     `);
     console.log("Database tables created successfully.");
