@@ -57,6 +57,13 @@ export default function Dashboard() {
     setAgentLogs(prev => [...prev, msg]);
   };
 
+  useEffect(() => {
+    window.addCortexLog = addLog;
+    return () => {
+      window.addCortexLog = null;
+    };
+  }, []);
+
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   // Handle User Chat

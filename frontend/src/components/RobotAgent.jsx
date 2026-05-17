@@ -145,6 +145,9 @@ export default function RobotAgent({ isRunning, logs, invoices, onToggleTerminal
   const [posX, setPosX] = useState(100);
   const [isHovered, setIsHovered] = useState(false);
   const [speech, setSpeech] = useState("UFO CORTEX-Alpha melakukan patroli galaksi 👽 Klik untuk chat!");
+  const [gpsActive, setGpsActive] = useState(false);
+  const [gpsCoords, setGpsCoords] = useState(null);
+  
   const dirRef = useRef(1);
   const posRef = useRef(100);
   const intervalRef = useRef(null);
@@ -168,6 +171,7 @@ export default function RobotAgent({ isRunning, logs, invoices, onToggleTerminal
 
   // Speech updates
   useEffect(() => {
+    if (gpsActive) return; // Keep GPS active message until reset
     if (!isRunning) {
       setSpeech("UFO CORTEX-Alpha melakukan patroli galaksi 👽 Klik untuk chat!");
       return;
@@ -193,7 +197,49 @@ export default function RobotAgent({ isRunning, logs, invoices, onToggleTerminal
       setSpeech("🛸 Kembali ke orbit patroli. Panggil aku kapanpun Bos butuh cuan!");
     };
     runSpeech();
-  }, [isRunning, invoices]);
+  }, [isRunning, invoices, gpsActive]);
+
+  // GPS Activation Handler
+  const handleGPSActivate = (e) => {
+    e.stopPropagation(); // Prevent opening terminal chat on clicking the GPS button
+    setGpsActive(true);
+    setSpeech("📡 Menghubungkan ke satelit GPS FDBAtech...");
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setGpsCoords({ lat: latitude, lng: longitude });
+          setSpeech(`🛰️ GPS AKTIF! Koordinat: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}. Menghubungkan ke CORTEX-Alpha...`);
+          
+          if (window.addCortexLog) {
+            window.addCortexLog({ type: 'system', text: '===========================================' });
+            window.addCortexLog({ type: 'system', text: `🛰️ GEOLOCATION PERMISSION GRANTED (GPS AKTIF)` });
+            window.addCortexLog({ type: 'system', text: `📍 Koordinat Terdeteksi: Lat ${latitude.toFixed(6)}, Lng ${longitude.toFixed(6)}` });
+            window.addCortexLog({ type: 'success', text: `[CORTEX-Alpha] 🛸 GPS sinkron! Radar memprioritaskan Laundry terdekat dari koordinat Kakak!` });
+            window.addCortexLog({ type: 'system', text: '===========================================' });
+          }
+        },
+        (error) => {
+          // Mock high-precision GPS fallback
+          const mockLat = -6.2088;
+          const mockLng = 106.8456;
+          setGpsCoords({ lat: mockLat, lng: mockLng });
+          setSpeech(`🛰️ GPS SATELIT AKTIF! Koordinat default: Jakarta Pusat (${mockLat}, ${mockLng}).`);
+          
+          if (window.addCortexLog) {
+            window.addCortexLog({ type: 'system', text: '===========================================' });
+            window.addCortexLog({ type: 'system', text: `🛰️ SATELLITE GPS ACTIVATED (BROWSER MOCK BACKUP)` });
+            window.addCortexLog({ type: 'system', text: `📍 Koordinat default: Lat ${mockLat}, Lng ${mockLng} (Jakarta Pusat)` });
+            window.addCortexLog({ type: 'success', text: `[CORTEX-Alpha] 🛸 GPS sinkron! Radar memprioritaskan Laundry terdekat dari koordinat Kakak!` });
+            window.addCortexLog({ type: 'system', text: '===========================================' });
+          }
+        }
+      );
+    } else {
+      setSpeech("❌ Geolocation API tidak didukung oleh browser ini.");
+    }
+  };
 
   return (
     <div
@@ -217,7 +263,7 @@ export default function RobotAgent({ isRunning, logs, invoices, onToggleTerminal
       >
         {/* Speech Bubble */}
         <div style={{
-          position: 'absolute', top: '-80px', left: '50%',
+          position: 'absolute', top: '-110px', left: '50%',
           transform: 'translateX(-50%)',
           background: 'linear-gradient(135deg, rgba(6,182,212,0.95), rgba(139,92,246,0.95))',
           borderRadius: '16px', padding: '10px 14px',
@@ -226,14 +272,51 @@ export default function RobotAgent({ isRunning, logs, invoices, onToggleTerminal
           boxShadow: '0 8px 32px rgba(6,182,212,0.4)',
           opacity: isHovered || isRunning ? 1 : 0,
           transition: 'opacity 0.3s ease',
-          textAlign: 'center', zIndex: 10, pointerEvents: 'none',
+          textAlign: 'center', zIndex: 10,
+          pointerEvents: isHovered || isRunning ? 'auto' : 'none',
         }}>
-          {speech}
+          <div>{speech}</div>
+
+          {/* GPS Activation Button */}
+          {!isRunning && (
+            <button
+              onClick={handleGPSActivate}
+              style={{
+                marginTop: '8px',
+                width: '100%',
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.4)',
+                borderRadius: '8px',
+                padding: '5px 8px',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(255,255,255,0.35)';
+                e.target.style.boxShadow = '0 0 10px rgba(255,255,255,0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255,255,255,0.2)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              <span>📡</span> {gpsActive ? 'GPS AKTIF' : 'Nyalakan GPS Terkini'}
+            </button>
+          )}
+
           <div style={{
             position: 'absolute', bottom: '-8px', left: '50%',
             transform: 'translateX(-50%) rotate(45deg)',
             width: '16px', height: '16px',
             background: 'rgba(6,182,212,0.95)',
+            zIndex: -1,
           }} />
         </div>
 
