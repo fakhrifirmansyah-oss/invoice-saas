@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
         // 2. Trigger automatic Comments from other owners based on keywords!
         // Budi Santoso (Laundry Express) comments:
         if (budiId) {
-          let budiComment = 'Luar biasa Bos! Terus berkarya dan mengorbit bersama FDBAtech! Maju terus wirausaha Indonesia! 🚀';
+          let budiComment = 'Luar biasa Bos! Terus berkarya dan mengorbit bersama FDBA Invoice Digital! Maju terus wirausaha Indonesia! 🚀';
           if (lowerContent.match(/(laundry|cuci|londri|setrika|gosok|baju|pakaian)/)) {
             budiComment = 'Waduh mantap rapi bener Bos usahanya! Kapan-kapan kita kolaborasi yuk antar sesama laundry. Sukses terus! LG Giant Max siap menanti 🧼👕';
           } else if (lowerContent.match(/(cuan|invoice|uang|pendapatan|omset|kaya)/)) {
@@ -106,18 +106,18 @@ router.post('/', async (req, res) => {
           if (lowerContent.match(/(laundry|cuci|londri|dryclean|premium)/)) {
             sitiComment = 'Rapih dan wangi banget pasti hasilnya Bos. Sukses selalu buat outlet barunya! 👔✨';
           } else if (lowerContent.match(/(kwitansi|cetak|kertas|invoice)/)) {
-            sitiComment = 'Betul Bos! Pakai FDBAtech cetak kwitansi jadi keliatan premium banget, pelanggan butik saya langsung percaya 👍';
+            sitiComment = 'Betul Bos! Pakai FDBA Invoice Digital cetak kwitansi jadi keliatan premium banget, pelanggan butik saya langsung percaya 👍';
           }
           await db.query("INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)", [newPost.id, sitiId, sitiComment]);
         }
 
         // Rian Hidayat (Rian Print) comments:
         if (rianId) {
-          let rianComment = 'Sangat mantap Bosku! Terus berkarya dan mengorbit bersama FDBAtech! 👍';
+          let rianComment = 'Sangat mantap Bosku! Terus berkarya dan mengorbit bersama FDBA Invoice Digital! 👍';
           if (lowerContent.match(/(kwitansi|cetak|kertas|concorde)/)) {
             rianComment = 'Wah mantap! Kertas Concorde emang tiada duanya Bos. Keliatan elite banget kwitansinya! 📄🔥';
           } else if (lowerContent.match(/(cuan|invoice|uang|tagih)/)) {
-            rianComment = 'Mantap Bos! Sistem audit tagihan FDBAtech bikin klien nunggak langsung insyaf bayar lunas hahaha! 😂👍';
+            rianComment = 'Mantap Bos! Sistem audit tagihan FDBA Invoice Digital bikin klien nunggak langsung insyaf bayar lunas hahaha! 😂👍';
           }
           await db.query("INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)", [newPost.id, rianId, rianComment]);
         }

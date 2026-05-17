@@ -316,13 +316,13 @@ export default function Dashboard() {
     }
     // 1.5. Cek intent laundry (Permintaan Khusus User)
     else if (lowerQuery.includes('laundry') || lowerQuery.includes('cuci') || lowerQuery.includes('setrika') || lowerQuery.includes('gosok') || lowerQuery.includes('londri') || lowerQuery.includes('dry clean')) {
-      addLog({ type: 'think', text: '[CORTEX-Alpha] 📡 Mengaktifkan Quantum Satellite Radar FDBAtech...' });
+      addLog({ type: 'think', text: '[CORTEX-Alpha] 📡 Mengaktifkan Quantum Satellite Radar FDBA Invoice Digital...' });
       await sleep(1000);
       addLog({ type: 'observe', text: '[CORTEX-Alpha] 👁️ Memindai koordinat GPS di sekitar Bosku...' });
       await sleep(1200);
       addLog({ type: 'act', text: '[CORTEX-Alpha] 🗺️ Menemukan outlet Laundry terpopuler di Indonesia!' });
       await sleep(800);
-      reply = `🛸 Radar FDBAtech berhasil melacak titik-titik outlet LAUNDRY terbaik untuk Bos:
+      reply = `🛸 Radar FDBA Invoice Digital berhasil melacak titik-titik outlet LAUNDRY terbaik untuk Bos:
 
 👔 PREMIUM DRY CLEAN (Jas, Kebaya, & Pakaian Mewah):
 1. **5asec Indonesia** - Tersebar di Jakarta (Menteng, Kemang, Kelapa Gading), Surabaya, Bandung, Bali, & Medan. (Layanan dry clean terbersih, standar internasional).
@@ -339,7 +339,7 @@ export default function Dashboard() {
 2. **Klin Laundry** - Jabodetabek, Surabaya, Medan.
 3. **Mr. & Mrs. Laundry** - Tangerang, Jakarta, Bekasi.
 
-💡 *Tips dari Cortex-Alpha*: Pemilik laundry kiloan & dry-clean di atas adalah target empuk untuk berlangganan SaaS FDBAtech, Bos! Mereka butuh cetak invoice & kwitansi fisik cepat. Mau gua bikinin draft penawaran untuk mereka? 🧼👕`;
+💡 *Tips dari Cortex-Alpha*: Pemilik laundry kiloan & dry-clean di atas adalah target empuk untuk berlangganan SaaS FDBA Invoice Digital, Bos! Mereka butuh cetak invoice & kwitansi fisik cepat. Mau gua bikinin draft penawaran untuk mereka? 🧼👕`;
     }
     // 2. Cek intent percakapan sehari-hari
     else if (lowerQuery.match(/^(halo|hai|oy|bro|bos)/)) {
@@ -370,7 +370,7 @@ export default function Dashboard() {
     // 3. Fallback Cerdas (Seolah-olah mengerti tapi mengalihkan pembicaraan)
     else {
       const fallbacks = [
-        `Haha, bahasan lo berat juga Bos! Otak kucing gua belum nyampe situ. Bahas soal cuan FDBAtech aja yuk! 💸`,
+        `Haha, bahasan lo berat juga Bos! Otak kucing gua belum nyampe situ. Bahas soal cuan FDBA Invoice Digital aja yuk! 💸`,
         `Wah, menarik tuh. Tapi prioritas utama gua sekarang mastiin semua invoice lo dibayar. Cuan is number one! 🥇`,
         `Meow! Gua paham maksud lo, tapi mending kita cek siapa aja klien yang belum bayar hari ini. 😼`,
         `Bisa aja lo Bos ngajak ngobrolnya! Mending klik tombol "Run Audit" biar uang cepat cair. 🚀`,
@@ -394,7 +394,7 @@ export default function Dashboard() {
     addLog({ type: 'system', text: '===========================================' });
     await sleep(1000);
 
-    addLog({ type: 'observe', text: '[CORTEX-Alpha] 👁️ Memindai server FDBAtech...' });
+    addLog({ type: 'observe', text: '[CORTEX-Alpha] 👁️ Memindai server FDBA Invoice Digital...' });
     await sleep(1000);
 
     if (unpaidInvoices > 0) {
@@ -438,7 +438,7 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight mb-1">CORTEX Command Center</h1>
-            <p className="text-gray-400 font-medium">FDBAtech Autonomous Financial Overview</p>
+            <p className="text-gray-400 font-medium">FDBA Invoice Digital Autonomous Financial Overview</p>
           </div>
           <div className="flex space-x-4">
             <Link 
@@ -755,7 +755,7 @@ export default function Dashboard() {
                           {post.image_url && (
                             <div className="relative group overflow-hidden rounded-xl border border-white/5 h-44">
                               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                                <span className="text-[10px] font-bold text-white flex items-center gap-1"><Sparkles size={10} className="text-cyan-400"/> FDBAtech Media Center</span>
+                                <span className="text-[10px] font-bold text-white flex items-center gap-1"><Sparkles size={10} className="text-cyan-400"/> FDBA Invoice Digital Media Center</span>
                               </div>
                               <img 
                                 src={post.image_url} 

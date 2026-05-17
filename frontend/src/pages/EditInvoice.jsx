@@ -242,7 +242,7 @@ export default function EditInvoice({ invoiceData }) {
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                 {invoiceType === 'receipt' ? 'Untuk Pembayaran (Purpose of Payment)' : 'Catatan Tambahan (Notes)'}
               </label>
-              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={invoiceType === 'receipt' ? 'Uraian lengkap peruntukan pembayaran (contoh: Pelunasan biaya pembuatan website SaaS FDBAtech)' : 'Syarat pembayaran, detail rekening bank, dll...'} rows="3" className="w-full bg-gray-950 border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-amber-500 resize-none transition-all" />
+              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={invoiceType === 'receipt' ? 'Uraian lengkap peruntukan pembayaran (contoh: Pelunasan biaya pembuatan website SaaS FDBA Invoice Digital)' : 'Syarat pembayaran, detail rekening bank, dll...'} rows="3" className="w-full bg-gray-950 border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-amber-500 resize-none transition-all" />
             </div>
           </div>
 

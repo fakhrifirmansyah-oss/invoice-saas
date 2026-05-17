@@ -52,7 +52,7 @@ export default function Login() {
             </div>
           </div>
           <h1 className="text-5xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-            FDBAtech Enterprise
+            FDBA Invoice Digital Enterprise
           </h1>
           <p className="text-xl text-gray-400 font-medium leading-relaxed">
             The world's most powerful, beautifully designed financial infrastructure for modern businesses.
@@ -62,7 +62,7 @@ export default function Login() {
         {/* Fake Code Snippet Background Element */}
         <div className="absolute bottom-10 left-10 opacity-20 font-mono text-xs text-indigo-300">
            <p>const initialize = async () =&gt; &#123;</p>
-           <p>&nbsp;&nbsp;await System.boot('FDBAtech');</p>
+           <p>&nbsp;&nbsp;await System.boot('FDBA Invoice Digital');</p>
            <p>&nbsp;&nbsp;return 'Success';</p>
            <p>&#125;;</p>
         </div>
@@ -125,7 +125,7 @@ export default function Login() {
                   type="email"
                   required
                   className="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
-                  placeholder="admin@fdbatech.com"
+                  placeholder="admin@fdbainvoicedigital.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

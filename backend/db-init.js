@@ -119,7 +119,7 @@ const createTables = async () => {
         // Siti post
         const sitiPost = await pool.query(`
           INSERT INTO posts (user_id, content, image_url, likes_count)
-          VALUES (${sitiId}, 'Alhamdulillah, testimoni bintang 5 dari pelanggan VIP hari ini! Senang sekali bisa membantu merapikan jas mewah klien dengan cepat dan aman. Pencatatan transaksi di FDBAtech benar-benar mempermudah segalanya! 📈💼', 'https://images.unsplash.com/photo-1521791136364-72864753023b?auto=format&fit=crop&w=600&q=80', 9)
+          VALUES (${sitiId}, 'Alhamdulillah, testimoni bintang 5 dari pelanggan VIP hari ini! Senang sekali bisa membantu merapikan jas mewah klien dengan cepat dan aman. Pencatatan transaksi di FDBA Invoice Digital benar-benar mempermudah segalanya! 📈💼', 'https://images.unsplash.com/photo-1521791136364-72864753023b?auto=format&fit=crop&w=600&q=80', 9)
           RETURNING id;
         `);
         const sitiPostId = sitiPost.rows[0].id;
@@ -127,7 +127,7 @@ const createTables = async () => {
         // Rian post
         const rianPost = await pool.query(`
           INSERT INTO posts (user_id, content, image_url, likes_count)
-          VALUES (${rianId}, 'Kwitansi Concorde Premium FDBAtech yang saya cetak kemarin langsung diserahkan ke klien besar. Begitu lihat stempel basah digital Lunas, pembayaran langsung disetujui! Rekomendasi banget buat pengusaha! 📄🚀', 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80', 15)
+          VALUES (${rianId}, 'Kwitansi Concorde Premium FDBA Invoice Digital yang saya cetak kemarin langsung diserahkan ke klien besar. Begitu lihat stempel basah digital Lunas, pembayaran langsung disetujui! Rekomendasi banget buat pengusaha! 📄🚀', 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80', 15)
           RETURNING id;
         `);
         const rianPostId = rianPost.rows[0].id;
@@ -145,7 +145,7 @@ const createTables = async () => {
           INSERT INTO comments (post_id, user_id, content)
           VALUES 
             (${sitiPostId}, ${budiId}, 'Hebat bu Siti! Layanan VIP emang margin paling mantap. Sukses terus ya!'),
-            (${sitiPostId}, ${rianId}, 'Betul bu, catatan keuangan jadi rapi banget sejak pakai FDBAtech.');
+            (${sitiPostId}, ${rianId}, 'Betul bu, catatan keuangan jadi rapi banget sejak pakai FDBA Invoice Digital.');
         `);
 
         // Seed comments on Rian's post

@@ -61,7 +61,7 @@ export default function Register() {
             Join the Elite
           </h1>
           <p className="text-xl text-gray-400 font-medium leading-relaxed">
-            Create your FDBAtech account and start billing your clients like a Fortune 500 company today.
+            Create your FDBA Invoice Digital account and start billing your clients like a Fortune 500 company today.
           </p>
           
           <div className="mt-12 flex items-center justify-center space-x-4 text-sm text-gray-500 font-medium">
@@ -76,7 +76,7 @@ export default function Register() {
         <div className="w-full max-w-md relative z-10">
           <div className="text-center lg:text-left mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight">Create Account</h2>
-            <p className="text-gray-400 font-medium">Let's get you set up with FDBAtech.</p>
+            <p className="text-gray-400 font-medium">Let's get you set up with FDBA Invoice Digital.</p>
           </div>
 
           {error && (
@@ -147,7 +147,7 @@ export default function Register() {
                       type="email"
                       required
                       className="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
-                      placeholder="admin@fdbatech.com"
+                      placeholder="admin@fdbainvoicedigital.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />

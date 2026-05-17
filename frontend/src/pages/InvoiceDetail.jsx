@@ -64,7 +64,7 @@ export default function InvoiceDetail() {
   const handleStartCourierTracking = () => {
     setShippingStep(3);
     setTrackingProgress(15);
-    setTrackingStatus('Pesanan cetak masuk ke sistem percetakan mitra FDBAtech...');
+    setTrackingStatus('Pesanan cetak masuk ke sistem percetakan mitra FDBA Invoice Digital...');
     
     setTimeout(() => {
       setTrackingProgress(45);
@@ -134,7 +134,7 @@ export default function InvoiceDetail() {
       <div className="mb-4 bg-gray-900 text-white p-4 rounded-xl print:hidden flex flex-col items-start gap-4 shadow-lg">
         <div className="flex items-center gap-2">
           <Palette size={20} className="text-gray-400" />
-          <span className="font-semibold tracking-wide">FDBAtech Theme Engine</span>
+          <span className="font-semibold tracking-wide">FDBA Invoice Digital Theme Engine</span>
         </div>
         
         <div className="flex flex-wrap gap-4 items-center w-full">
@@ -145,7 +145,7 @@ export default function InvoiceDetail() {
               value={selectedMockup}
               onChange={(e) => setSelectedMockup(e.target.value)}
             >
-              <option value="" className="text-black">Gunakan Tema FDBAtech Utama</option>
+              <option value="" className="text-black">Gunakan Tema FDBA Invoice Digital Utama</option>
               <option disabled className="text-gray-400">--- 100 Tema Generasi AI ---</option>
               {mockupThemeNames.map(name => (
                 <option key={name} value={name} className="text-black">{name.replace(/_/g, ' ')}</option>
@@ -230,7 +230,7 @@ export default function InvoiceDetail() {
       {/* Security alert indicator */}
       <div className="mb-3 flex items-center gap-2 text-emerald-600 text-xs font-bold print:hidden">
         <ShieldCheck size={14} />
-        <span>FDBAtech AI Protection Active — Konten invoice dilindungi dari pencurian / AI scraping</span>
+        <span>FDBA Invoice Digital AI Protection Active — Konten invoice dilindungi dari pencurian / AI scraping</span>
       </div>
 
       {selectedMockup && MockupComponent ? (
@@ -320,7 +320,7 @@ export default function InvoiceDetail() {
                     )}
                     <p className="text-xs text-gray-500 font-medium mb-1 font-serif italic">{new Date(invoice.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     <p className="mb-12 text-xs font-bold text-gray-700">Penerima,</p>
-                    <p className="font-bold uppercase border-b border-gray-800 text-gray-900 text-sm">Finance FDBAtech</p>
+                    <p className="font-bold uppercase border-b border-gray-800 text-gray-900 text-sm">Finance FDBA Invoice Digital</p>
                   </div>
                 </div>
               </div>
@@ -336,12 +336,12 @@ export default function InvoiceDetail() {
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-2xl ${isClassic ? 'bg-gray-900 rounded-none' : `bg-gradient-to-br ${activeColor.gradientBtn}`}`}>
                         F
                       </div>
-                      <h2 className={`text-3xl font-bold tracking-tight ${isClassic ? 'uppercase' : ''} text-gray-900`}>FDBAtech</h2>
+                      <h2 className={`text-3xl font-bold tracking-tight ${isClassic ? 'uppercase' : ''} text-gray-900`}>FDBA Invoice Digital</h2>
                     </div>
                     <p className={`text-gray-600 text-sm leading-relaxed ${isClassic ? 'font-mono' : ''}`}>
-                      Gedung FDBAtech Lantai 4<br/>
+                      Gedung FDBA Invoice Digital Lantai 4<br/>
                       Kuningan, Jakarta Selatan 12940<br/>
-                      {invoice.company_npwp ? `NPWP: ${invoice.company_npwp}` : 'billing@fdbatech.com'}
+                      {invoice.company_npwp ? `NPWP: ${invoice.company_npwp}` : 'billing@fdbainvoicedigital.com'}
                     </p>
                   </div>
 
@@ -454,7 +454,7 @@ export default function InvoiceDetail() {
                     <p className="mb-1 text-gray-700 text-xs">Mohon transfer pembayaran tagihan ke rekening resmi kami:</p>
                     <p className="font-bold text-gray-900">Bank BCA (Cabang Jakarta)</p>
                     <p className="font-mono mt-2 inline-block bg-white px-3 py-1.5 rounded border border-gray-200 shadow-sm text-gray-800 font-bold text-base">
-                      A/N FDBAtech: 098-765-4321
+                      A/N FDBA Invoice Digital: 098-765-4321
                     </p>
                     {invoice.notes && (
                       <div className="mt-4 border-t border-gray-200/50 pt-3 text-xs text-gray-500">
@@ -506,7 +506,7 @@ export default function InvoiceDetail() {
                 <div className={`mt-16 pt-8 flex flex-col sm:flex-row justify-between items-end ${isClassic ? '' : 'border-t border-gray-100'}`}>
                   <div className="text-gray-400 text-[10px] w-full sm:w-1/2 leading-relaxed font-sans">
                     * Pembayaran dianggap sah apabila dana telah masuk sepenuhnya ke rekening kami.<br/>
-                    * Dokumen ini diterbitkan secara elektronik dan dilindungi oleh FDBAtech AI Protection Engine.
+                    * Dokumen ini diterbitkan secara elektronik dan dilindungi oleh FDBA Invoice Digital AI Protection Engine.
                   </div>
                   
                   <div className="text-center w-full sm:w-48 mt-8 sm:mt-0 relative">
@@ -516,7 +516,7 @@ export default function InvoiceDetail() {
                       </div>
                     )}
                     <p className="mb-14 text-sm font-bold text-gray-700">Hormat Kami,</p>
-                    <p className="font-bold uppercase border-b border-gray-900 text-gray-900">Finance FDBAtech</p>
+                    <p className="font-bold uppercase border-b border-gray-900 text-gray-900">Finance FDBA Invoice Digital</p>
                   </div>
                 </div>
               </>
@@ -653,7 +653,7 @@ export default function InvoiceDetail() {
                       <span className="text-white font-bold font-mono">Rp 25.000</span>
                     </div>
                     <div className="flex justify-between text-xs text-gray-400">
-                      <span>Biaya Administrasi & Layanan FDBAtech</span>
+                      <span>Biaya Administrasi & Layanan FDBA Invoice Digital</span>
                       <span className="text-white font-bold font-mono">Rp 15.000</span>
                     </div>
                     <hr className="border-white/5 my-2" />

@@ -9,7 +9,7 @@ export default function LandingPage() {
       <section className="py-20 text-center">
         <div className="max-w-4xl mx-auto px-4">
           <div className="inline-block bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide uppercase mb-6 border border-indigo-100">
-            Welcome to FDBAtech 1.0
+            Welcome to FDBA Invoice Digital 1.0
           </div>
           <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 tracking-tight">
             Stop Chasing Payments.<br />
@@ -18,7 +18,7 @@ export default function LandingPage() {
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Create professional, stunning invoices in under 10 seconds. FDBAtech gives you 100+ beautiful templates to make your business look like a million bucks.
+            Create professional, stunning invoices in under 10 seconds. FDBA Invoice Digital gives you 100+ beautiful templates to make your business look like a million bucks.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/register" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:shadow-xl hover:shadow-indigo-200 transition-all hover:-translate-y-1">
@@ -36,7 +36,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-black text-gray-900 mb-4">Why Top Freelancers Choose Us</h2>
-            <p className="text-gray-600">We built FDBAtech with 25 years of marketing experience in mind.</p>
+            <p className="text-gray-600">We built FDBA Invoice Digital with 25 years of marketing experience in mind.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
