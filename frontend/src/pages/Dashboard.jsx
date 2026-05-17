@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { Plus, FileText, CheckCircle, Clock, TrendingUp, Search, Filter, Cpu, Terminal, Zap, Activity, Send, MessageSquare, Heart, Share2, Image, Sparkles, Globe } from 'lucide-react';
+import { Plus, FileText, CheckCircle, Clock, TrendingUp, Search, Filter, Cpu, Terminal, Zap, Activity, Send, MessageSquare, Heart, Share2, Image, Sparkles, Globe, MapPin, Navigation, Truck, Tag, Trash2, UserCheck, Map } from 'lucide-react';
 import RobotAgent from '../components/RobotAgent';
 
 export default function Dashboard() {
@@ -75,6 +75,23 @@ export default function Dashboard() {
   const [expandedComments, setExpandedComments] = useState({});
   const [commentInputs, setCommentInputs] = useState({});
 
+  // Laundry pricing states
+  const [laundryPrices, setLaundryPrices] = useState([]);
+  const [newServiceName, setNewServiceName] = useState('');
+  const [newPriceVal, setNewPriceVal] = useState('');
+  const [newUnitType, setNewUnitType] = useState('kg');
+
+  // Gojek SaaS ojek & kurir logistics states
+  const [ridesHistory, setRidesHistory] = useState([]);
+  const [newRideType, setNewRideType] = useState('FDBA-Ride');
+  const [pickupAddress, setPickupAddress] = useState('Butik Amanah Menteng');
+  const [dropoffAddress, setDropoffAddress] = useState('Budi Laundry Express Sudirman');
+  const [rideFare, setRideFare] = useState(12000);
+  const [isDispatching, setIsDispatching] = useState(false);
+  const [dispatchStep, setDispatchStep] = useState(0); // 0: idle, 1: searching, 2: picking up, 3: heading to destination, 4: completed!
+  const [activeDriver, setActiveDriver] = useState('');
+  const [driverPos, setDriverPos] = useState({ x: 10, y: 10 }); // position for visual tracker route
+
   const fetchPosts = async () => {
     try {
       const res = await api.get('/posts');
@@ -84,9 +101,119 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch laundry prices
+  const fetchLaundryPrices = async () => {
+    try {
+      const res = await api.get('/logistics/prices');
+      setLaundryPrices(res.data);
+    } catch (err) {
+      console.error('Error fetching laundry prices:', err);
+    }
+  };
+
+  // Fetch ride history
+  const fetchRidesHistory = async () => {
+    try {
+      const res = await api.get('/logistics/rides');
+      setRidesHistory(res.data);
+    } catch (err) {
+      console.error('Error fetching ride history:', err);
+    }
+  };
+
+  // Handle adding laundry price
+  const handleAddPrice = async (e) => {
+    e.preventDefault();
+    if (!newServiceName.trim() || !newPriceVal) return;
+    try {
+      const res = await api.post('/logistics/prices', {
+        service_name: newServiceName,
+        price_per_unit: parseFloat(newPriceVal),
+        unit_type: newUnitType
+      });
+      setLaundryPrices(prev => [...prev, res.data]);
+      setNewServiceName('');
+      setNewPriceVal('');
+    } catch (err) {
+      console.error('Error saving laundry price:', err);
+    }
+  };
+
+  // Handle deleting laundry price
+  const handleDeletePrice = async (priceId) => {
+    try {
+      await api.delete(`/logistics/prices/${priceId}`);
+      setLaundryPrices(prev => prev.filter(p => p.id !== priceId));
+    } catch (err) {
+      console.error('Error deleting laundry price:', err);
+    }
+  };
+
+  // Handle auto-calculating ride fare based on distance
+  useEffect(() => {
+    const dist = Math.max(3, Math.min(15, (pickupAddress.length + dropoffAddress.length) % 12 + 3));
+    setRideFare(dist * 2000);
+  }, [pickupAddress, dropoffAddress]);
+
+  // Handle Dispatching Rider/Ojek Gojek SaaS
+  const handleDispatchCourier = async (e) => {
+    e.preventDefault();
+    if (isDispatching) return;
+    setIsDispatching(true);
+    setDispatchStep(1);
+    setActiveDriver('Mencari driver terdekat...');
+
+    // Trigger Satellite Logs
+    addLog({ type: 'think', text: `[Satelit CORTEX-Alpha] 📡 Mengunci transmisi ojek ${newRideType}...` });
+    await sleep(1500);
+
+    const drivers = ['Roni Ojek Orbit', 'Aris Bintang Kilat', 'Bimo Kurir Concorde', 'Seno Go-FDBA'];
+    const chosenDriver = drivers[Math.floor(Math.random() * drivers.length)];
+    setActiveDriver(chosenDriver);
+    setDispatchStep(2);
+    setDriverPos({ x: 20, y: 80 });
+    addLog({ type: 'observe', text: `[Satelit CORTEX-Alpha] 🛵 Driver ${chosenDriver} sukses dikunci! Menuju titik penjemputan: "${pickupAddress}"` });
+
+    await sleep(2000);
+    setDispatchStep(3);
+    setDriverPos({ x: 50, y: 50 });
+    addLog({ type: 'act', text: `[Satelit CORTEX-Alpha] 📦 Cucian/Penumpang berhasil dijemput oleh ${chosenDriver}! Sedang memacu gas menuju tujuan: "${dropoffAddress}"` });
+
+    await sleep(2500);
+    setDispatchStep(4);
+    setDriverPos({ x: 80, y: 20 });
+    addLog({ type: 'success', text: `[Satelit CORTEX-Alpha] 🎉 Transaksi ${newRideType} Selesai! Mengamankan dana Rp ${rideFare.toLocaleString('id-ID')} dan otomatis menerbitkan invoice digital.` });
+
+    // Submit order to Backend
+    try {
+      await api.post('/logistics/rides', {
+        ride_type: newRideType,
+        pickup_address: pickupAddress,
+        dropoff_address: dropoffAddress,
+        fare: rideFare
+      });
+
+      // Refetch history and invoices
+      fetchRidesHistory();
+      const invRes = await api.get('/invoices');
+      setInvoices(invRes.data);
+    } catch (err) {
+      console.error('Error recording ride:', err);
+    }
+
+    await sleep(1000);
+    setIsDispatching(false);
+    setDispatchStep(0);
+  };
+
   useEffect(() => {
     if (activeTab === 'social') {
       fetchPosts();
+    } else if (activeTab === 'laundry-pricing') {
+      fetchLaundryPrices();
+    } else if (activeTab === 'fdba-superapp') {
+      fetchRidesHistory();
+      fetchLaundryPrices();
     }
   }, [activeTab]);
 
@@ -370,7 +497,7 @@ export default function Dashboard() {
           
           {/* AI AGENT INTERACTIVE TERMINAL (Left Side) - ONLY SHOW IF OPEN */}
           {isTerminalOpen && (
-          <div className="lg:col-span-1 flex flex-col bg-gray-950 border border-emerald-500/20 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden h-[500px]">
+          <div className="lg:col-span-1 flex flex-col bg-gray-950 border border-emerald-500/20 rounded-3xl shadow-2xl shadow-emerald-500/10 overflow-hidden h-[750px]">
             <div className="p-4 border-b border-emerald-500/20 bg-emerald-950/20 flex justify-between items-center">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center relative">
@@ -448,15 +575,15 @@ export default function Dashboard() {
           )}
 
           {/* Data Table (Right Side) */}
-          <div className={`lg:col-span-${isTerminalOpen ? '2' : '3'} transition-all duration-500 bg-gray-900/50 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px]`}>
+          <div className={`lg:col-span-${isTerminalOpen ? '2' : '3'} transition-all duration-500 bg-gray-900/50 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[750px]`}>
             
             {/* Tab Navigator */}
             <div className="flex border-b border-white/5 bg-white/[0.01]">
               <button 
                 onClick={() => setActiveTab('transactions')}
-                className={`flex-1 py-3 text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
+                className={`flex-grow py-3 text-[10px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
                   activeTab === 'transactions' 
-                    ? 'border-indigo-500 text-white bg-indigo-500/5 shadow-[inset_0_-8px_16px_rgba(99,102,241,0.05)]' 
+                    ? 'border-indigo-500 text-white bg-indigo-500/5' 
                     : 'border-transparent text-gray-500 hover:text-gray-300'
                 }`}
               >
@@ -464,17 +591,37 @@ export default function Dashboard() {
               </button>
               <button 
                 onClick={() => setActiveTab('social')}
-                className={`flex-1 py-3 text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
+                className={`flex-grow py-3 text-[10px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
                   activeTab === 'social' 
-                    ? 'border-cyan-500 text-white bg-cyan-500/5 shadow-[inset_0_-8px_16px_rgba(6,182,212,0.05)]' 
+                    ? 'border-cyan-500 text-white bg-cyan-500/5' 
                     : 'border-transparent text-gray-500 hover:text-gray-300'
                 }`}
               >
                 <Globe size={14} /> CORTEX Space Feed 🛸
               </button>
+              <button 
+                onClick={() => setActiveTab('laundry-pricing')}
+                className={`flex-grow py-3 text-[10px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
+                  activeTab === 'laundry-pricing' 
+                    ? 'border-amber-500 text-white bg-amber-500/5' 
+                    : 'border-transparent text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                <Tag size={14} /> Tarif Laundry 🧼
+              </button>
+              <button 
+                onClick={() => setActiveTab('fdba-superapp')}
+                className={`flex-grow py-3 text-[10px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2 border-b-2 ${
+                  activeTab === 'fdba-superapp' 
+                    ? 'border-green-500 text-white bg-green-500/5' 
+                    : 'border-transparent text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                <Map size={14} /> Kurir & Ojek 🛵
+              </button>
             </div>
 
-            {activeTab === 'social' ? (
+            {activeTab === 'social' && (
               <div className="flex-grow flex flex-col overflow-hidden bg-gray-950/80">
                 {/* Publish box */}
                 <div className="p-4 border-b border-white/5 bg-white/[0.01]">
@@ -710,7 +857,9 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-            ) : (
+            )}
+
+            {activeTab === 'transactions' && (
               <>
                 <div className="p-5 border-b border-white/5 flex flex-col gap-3 bg-white/[0.02]">
                   <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -817,6 +966,272 @@ export default function Dashboard() {
                   </table>
                 </div>
               </>
+            )}
+
+            {activeTab === 'laundry-pricing' && (
+              <div className="flex-grow flex flex-col overflow-hidden bg-gray-950/80 p-6">
+                <div className="flex flex-col md:flex-row gap-6 h-full overflow-y-auto pr-1">
+                  {/* Left Side: Pricing List */}
+                  <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl p-5 flex flex-col">
+                    <h3 className="text-sm font-black uppercase text-amber-400 tracking-wider mb-4 flex items-center gap-2">
+                      <Tag size={16} /> Daftar Layanan & Tarif Aktif 🧼
+                    </h3>
+                    <div className="overflow-y-auto flex-grow max-h-[450px] pr-2 divide-y divide-white/5">
+                      {laundryPrices.length === 0 ? (
+                        <p className="text-xs text-gray-500 py-6 text-center">Belum ada tarif terpasang. Tambahkan sekarang di sebelah kanan!</p>
+                      ) : (
+                        laundryPrices.map(price => (
+                          <div key={price.id} className="py-3 flex justify-between items-center group">
+                            <div>
+                              <p className="text-xs font-bold text-white">{price.service_name}</p>
+                              <p className="text-[10px] text-gray-400">Tarif: <span className="text-amber-300 font-bold">Rp {parseFloat(price.price_per_unit).toLocaleString('id-ID')}</span> / {price.unit_type}</p>
+                            </div>
+                            <button 
+                              onClick={() => handleDeletePrice(price.id)}
+                              className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all opacity-0 group-hover:opacity-100"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Side: Add Price Form */}
+                  <div className="w-full md:w-80 bg-white/[0.02] border border-white/5 rounded-2xl p-5">
+                    <h3 className="text-sm font-black uppercase text-amber-400 tracking-wider mb-4 flex items-center gap-2">
+                      <Plus size={16} /> Atur Layanan Baru ⚙️
+                    </h3>
+                    <form onSubmit={handleAddPrice} className="flex flex-col gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Nama Layanan Laundry</label>
+                        <input 
+                          type="text" 
+                          value={newServiceName}
+                          onChange={e => setNewServiceName(e.target.value)}
+                          placeholder="Contoh: Cuci Kering Setrika Premium" 
+                          required
+                          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Harga Rupiah (Rp)</label>
+                        <input 
+                          type="number" 
+                          value={newPriceVal}
+                          onChange={e => setNewPriceVal(e.target.value)}
+                          placeholder="Contoh: 10000" 
+                          required
+                          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tipe Satuan</label>
+                        <select 
+                          value={newUnitType}
+                          onChange={e => setNewUnitType(e.target.value)}
+                          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                        >
+                          <option value="kg">kg (Kiloan)</option>
+                          <option value="pcs">pcs (Satuan / Potong)</option>
+                          <option value="set">set (Sprei / Bedcover)</option>
+                        </select>
+                      </div>
+                      <button 
+                        type="submit"
+                        className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20"
+                      >
+                        Pasang Harga Tarif 🧺
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'fdba-superapp' && (
+              <div className="flex-grow flex flex-col overflow-hidden bg-gray-950/80 p-5">
+                <div className="flex flex-col lg:flex-row gap-5 h-full overflow-y-auto pr-1">
+                  
+                  {/* 1. VISUAL RADAR MAP TRACKER (Left Side) */}
+                  <div className="w-full lg:w-[240px] bg-black/50 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[300px]">
+                    <div className="w-full text-center border-b border-white/5 pb-2 mb-2">
+                      <span className="text-[10px] font-black uppercase text-green-400 tracking-wider flex items-center justify-center gap-1.5">
+                        <Navigation size={12} className="animate-pulse" /> Dispatch Radar
+                      </span>
+                    </div>
+
+                    {/* Styled Vector Cyber Map Grid */}
+                    <div className="relative w-40 h-40 rounded-full border border-green-500/20 bg-green-950/5 flex items-center justify-center overflow-hidden">
+                      {/* Radar sweep lines */}
+                      <div className="absolute inset-0 border border-green-500/10 rounded-full scale-75"></div>
+                      <div className="absolute inset-0 border border-green-500/10 rounded-full scale-50"></div>
+                      <div className="absolute inset-y-0 left-1/2 w-[1px] bg-green-500/10"></div>
+                      <div className="absolute inset-x-0 top-1/2 h-[1px] bg-green-500/10"></div>
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-transparent to-green-500/5 animate-[spin_5s_linear_infinite]"></div>
+
+                      {/* Map Route Dotted Path Line */}
+                      {isDispatching && (
+                        <div className="absolute w-[100px] h-[100px] border-b-2 border-r-2 border-dashed border-green-500/20 rounded-br-3xl transform -rotate-45"></div>
+                      )}
+
+                      {/* START POINT PIN */}
+                      <div className="absolute top-[80%] left-[20%] z-10 flex flex-col items-center">
+                        <MapPin size={14} className="text-amber-500 animate-bounce" />
+                        <span className="text-[7px] bg-amber-500/90 text-black font-black px-1 rounded">JEMPUT</span>
+                      </div>
+
+                      {/* END POINT PIN */}
+                      <div className="absolute top-[20%] left-[80%] z-10 flex flex-col items-center">
+                        <CheckCircle size={14} className="text-green-500" />
+                        <span className="text-[7px] bg-green-500/90 text-black font-black px-1 rounded">TUJUAN</span>
+                      </div>
+
+                      {/* ANIMATED SCOOTER COURIER */}
+                      <div 
+                        className="absolute z-20 transition-all duration-1000 ease-in-out bg-green-500 text-black font-black w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-green-500/40 border border-white/20"
+                        style={{
+                          left: `${dispatchStep === 0 ? 50 : (dispatchStep === 1 ? 50 : (dispatchStep === 2 ? 20 : (dispatchStep === 3 ? 50 : 80)))}%`,
+                          top: `${dispatchStep === 0 ? 50 : (dispatchStep === 1 ? 50 : (dispatchStep === 2 ? 80 : (dispatchStep === 3 ? 50 : 20)))}%`,
+                          transform: 'translate(-50%, -50%)',
+                          animation: dispatchStep === 1 ? 'pulse 1s infinite' : 'none'
+                        }}
+                      >
+                        🛵
+                      </div>
+                    </div>
+
+                    <div className="w-full text-center mt-2 bg-green-950/20 border border-green-500/10 rounded-lg py-1.5 px-3">
+                      <p className="text-[8px] font-mono text-green-400">
+                        {dispatchStep === 0 && 'STATUS: STANDBY ORBIT'}
+                        {dispatchStep === 1 && 'STATUS: MENCARI RIDER...'}
+                        {dispatchStep === 2 && 'STATUS: RIDER KE JEMPUTAN'}
+                        {dispatchStep === 3 && 'STATUS: RIDER KE TUJUAN'}
+                        {dispatchStep === 4 && 'STATUS: ANTARAN SELESAI'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 2. ORDER DISPATCH FORM (Middle Side) */}
+                  <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl p-4">
+                    <h3 className="text-xs font-black uppercase text-green-400 tracking-wider mb-4 flex items-center gap-2">
+                      <Truck size={14} /> Kurir & Ojek Penumpang 🛵
+                    </h3>
+                    <form onSubmit={handleDispatchCourier} className="flex flex-col gap-3">
+                      <div>
+                        <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Pilih Layanan Gojek SaaS</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setNewRideType('FDBA-Ride')}
+                            className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                              newRideType === 'FDBA-Ride'
+                                ? 'bg-green-500/20 border-green-500/50 text-green-400'
+                                : 'bg-black border-white/5 text-gray-500 hover:text-gray-300'
+                            }`}
+                          >
+                            🛵 FDBA-Ride (Ojek Orang)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewRideType('FDBA-Express')}
+                            className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                              newRideType === 'FDBA-Express'
+                                ? 'bg-green-500/20 border-green-500/50 text-green-400'
+                                : 'bg-black border-white/5 text-gray-500 hover:text-gray-300'
+                            }`}
+                          >
+                            📦 FDBA-Express (Cucian)
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">📍 Alamat Penjemputan</label>
+                        <input 
+                          type="text" 
+                          value={pickupAddress}
+                          onChange={e => setPickupAddress(e.target.value)}
+                          placeholder="Masukkan alamat jemput..." 
+                          required
+                          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-green-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">🏁 Alamat Dropoff Tujuan</label>
+                        <input 
+                          type="text" 
+                          value={dropoffAddress}
+                          onChange={e => setDropoffAddress(e.target.value)}
+                          placeholder="Masukkan alamat tujuan..." 
+                          required
+                          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-green-500"
+                        />
+                      </div>
+
+                      <div className="bg-black border border-white/5 rounded-xl p-3 flex justify-between items-center my-1">
+                        <div>
+                          <p className="text-[8px] font-bold text-gray-500 uppercase">Tarif Super-App</p>
+                          <p className="text-xs font-black text-white">Rp {rideFare.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[8px] font-bold text-gray-500 uppercase">Estimasi Jarak</p>
+                          <p className="text-[10px] font-bold text-green-400">{(rideFare / 2000).toFixed(1)} km</p>
+                        </div>
+                      </div>
+
+                      <button 
+                        type="submit"
+                        disabled={isDispatching || !pickupAddress.trim() || !dropoffAddress.trim()}
+                        className="w-full py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-black text-xs transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
+                      >
+                        {isDispatching ? 'Menghubungkan ke Kurir...' : 'Panggil Ojek Kurir FDBA 🛵'}
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* 3. COURIER RIDES ORDER HISTORY (Right Side) */}
+                  <div className="w-full lg:w-72 bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex flex-col">
+                    <h3 className="text-xs font-black uppercase text-green-400 tracking-wider mb-3 flex items-center gap-2">
+                      <UserCheck size={14} /> Riwayat Kurir 📡
+                    </h3>
+
+                    {/* Active dispatch monitor panel */}
+                    {isDispatching && (
+                      <div className="bg-green-950/20 border border-green-500/30 rounded-xl p-3.5 mb-4 animate-pulse">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-[9px] bg-green-500 text-black px-1.5 py-0.5 rounded font-black uppercase">ACTIVE</span>
+                        </div>
+                        <p className="text-[11px] font-bold text-white mb-1">Rider: <span className="text-green-300 font-black">{activeDriver}</span></p>
+                        <p className="text-[9px] text-gray-400">Rute: {pickupAddress.slice(0, 14)}... {" \u2192 "} {dropoffAddress.slice(0, 14)}...</p>
+                      </div>
+                    )}
+
+                    {/* Order histories list */}
+                    <div className="overflow-y-auto flex-grow max-h-[300px] divide-y divide-white/5 pr-1">
+                      {ridesHistory.length === 0 ? (
+                        <p className="text-[10px] text-gray-500 py-8 text-center">Belum ada riwayat pesanan kurir.</p>
+                      ) : (
+                        ridesHistory.map(ride => (
+                          <div key={ride.id} className="py-2">
+                            <div className="flex justify-between items-start">
+                              <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase ${
+                                ride.ride_type === 'FDBA-Ride' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                              }`}>{ride.ride_type}</span>
+                              <span className="text-[9px] font-bold text-white">Rp {parseFloat(ride.fare).toLocaleString('id-ID')}</span>
+                            </div>
+                            <p className="text-[9px] font-bold text-gray-300 mt-1">Driver: {ride.driver_name}</p>
+                            <p className="text-[8px] text-gray-500 mt-0.5">Jalur: {ride.pickup_address} {" \u2192 "} {ride.dropoff_address}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             )}
 
           </div>

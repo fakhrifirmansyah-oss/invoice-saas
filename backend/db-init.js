@@ -55,6 +55,27 @@ const createTables = async () => {
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE TABLE IF NOT EXISTS laundry_prices (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        service_name VARCHAR(150) NOT NULL,
+        price_per_unit DECIMAL(12, 2) NOT NULL,
+        unit_type VARCHAR(20) DEFAULT 'kg',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS courier_rides (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        ride_type VARCHAR(50) NOT NULL,
+        pickup_address TEXT NOT NULL,
+        dropoff_address TEXT NOT NULL,
+        fare DECIMAL(12, 2) NOT NULL,
+        status VARCHAR(50) DEFAULT 'completed',
+        driver_name VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
     console.log("Database tables created successfully.");
 
