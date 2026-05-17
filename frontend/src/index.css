@@ -13,3 +13,95 @@
   50% { right: calc(100vw - 320px); }
   100% { right: 20px; }
 }
+
+/* ========================================================== */
+/* 🖨️ ADVANCED A4 SINGLE-PAGE PRINT OPTIMIZATIONS */
+/* ========================================================== */
+@media print {
+  /* Force clean black/white text & reset base sizes */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Target page print margins to maximize printable height */
+  @page {
+    size: A4 portrait;
+    margin: 0.4cm !important;
+  }
+
+  /* Force print wrapper to avoid multi-page spillover */
+  #protected-invoice {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-height: 285mm !important; /* Perfect A4 limit */
+    overflow: hidden !important;
+    transform: scale(0.92) !important;
+    transform-origin: top center !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Tighten spacing, padding & grid margins for print sheets */
+  #protected-invoice .p-8,
+  #protected-invoice .p-12,
+  #protected-invoice .p-14,
+  #protected-invoice .sm\:p-12,
+  #protected-invoice .sm\:p-14 {
+    padding: 12px !important;
+  }
+
+  #protected-invoice .mb-10,
+  #protected-invoice .mb-8,
+  #protected-invoice .mb-6 {
+    margin-bottom: 8px !important;
+  }
+
+  #protected-invoice .mt-16,
+  #protected-invoice .mt-12,
+  #protected-invoice .mt-10 {
+    margin-top: 10px !important;
+  }
+
+  #protected-invoice .mt-16 {
+    margin-top: 12px !important;
+  }
+
+  /* Compress table rows & cell sizes */
+  #protected-invoice table th,
+  #protected-invoice table td {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+
+  #protected-invoice tr {
+    page-break-inside: avoid !important;
+  }
+
+  #protected-invoice hr {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Make sure background badges & stamps stay visible */
+  #protected-invoice .absolute {
+    opacity: 0.15 !important;
+  }
+
+  #protected-invoice .space-y-6 > * + * {
+    margin-top: 6px !important;
+  }
+
+  #protected-invoice .space-y-3 > * + * {
+    margin-top: 3px !important;
+  }
+}
