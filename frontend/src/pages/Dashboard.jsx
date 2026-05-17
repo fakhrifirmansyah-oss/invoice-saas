@@ -87,6 +87,33 @@ export default function Dashboard() {
         reply = `Aman Bos! Ga ada yang berani ngutang sama kita. Semua lunas! 😎`;
       }
     }
+    // 1.5. Cek intent laundry (Permintaan Khusus User)
+    else if (lowerQuery.includes('laundry') || lowerQuery.includes('cuci') || lowerQuery.includes('setrika') || lowerQuery.includes('gosok') || lowerQuery.includes('londri') || lowerQuery.includes('dry clean')) {
+      addLog({ type: 'think', text: '[CORTEX-Alpha] 📡 Mengaktifkan Quantum Satellite Radar FDBAtech...' });
+      await sleep(1000);
+      addLog({ type: 'observe', text: '[CORTEX-Alpha] 👁️ Memindai koordinat GPS di sekitar Bosku...' });
+      await sleep(1200);
+      addLog({ type: 'act', text: '[CORTEX-Alpha] 🗺️ Menemukan outlet Laundry terpopuler di Indonesia!' });
+      await sleep(800);
+      reply = `🛸 Radar FDBAtech berhasil melacak titik-titik outlet LAUNDRY terbaik untuk Bos:
+
+👔 PREMIUM DRY CLEAN (Jas, Kebaya, & Pakaian Mewah):
+1. **5asec Indonesia** - Tersebar di Jakarta (Menteng, Kemang, Kelapa Gading), Surabaya, Bandung, Bali, & Medan. (Layanan dry clean terbersih, standar internasional).
+2. **Jeeves Indonesia** - Jakarta (Menteng, Kebayoran Baru, Pluit). Premium luxury fabric care legendaris.
+3. **Clean & Glow** - Tersedia di kota-kota besar Indonesia (Jakarta, Tangerang, Bandung, Surabaya).
+
+⚡ COIN LAUNDRY EXPRESS (Self-Service 1 Jam Selesai):
+1. **Maxpress Coin Laundry** - Lebih dari 100+ cabang di Jabodetabek, Surabaya, Bandung, Malang. (Cuci-kering kilat otomatis pakai koin).
+2. **Inas Coin Laundry** - Wilayah Jabodetabek.
+3. **Laundrette** - Cabang Menteng, Kemang, Kebayoran (Jakarta).
+
+📦 KILOAN & SATUAN MODERN (Bersih, Rapi, & Ramah Dompet):
+1. **Superwash Laundry** - Yogyakarta, Sleman, Solo, Semarang, Bandung. (Franchise Kiloan sangat populer).
+2. **Klin Laundry** - Jabodetabek, Surabaya, Medan.
+3. **Mr. & Mrs. Laundry** - Tangerang, Jakarta, Bekasi.
+
+💡 *Tips dari Cortex-Alpha*: Pemilik laundry kiloan & dry-clean di atas adalah target empuk untuk berlangganan SaaS FDBAtech, Bos! Mereka butuh cetak invoice & kwitansi fisik cepat. Mau gua bikinin draft penawaran untuk mereka? 🧼👕`;
+    }
     // 2. Cek intent percakapan sehari-hari
     else if (lowerQuery.match(/^(halo|hai|oy|bro|bos)/)) {
       reply = `Yoi Bosku! Gimana, ada yang bisa gua bantu hari ini? 🐈`;
