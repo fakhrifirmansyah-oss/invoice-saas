@@ -485,23 +485,69 @@ export default function Dashboard() {
                       placeholder="Bagikan kabar bisnis Bosku di Orbit (contoh: promo laundry terbaru, cetakan kwitansi)..."
                       className="w-full h-16 bg-black border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none placeholder-gray-600"
                     />
-                    <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-                      {/* Image Preset Select */}
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <span className="text-[10px] font-bold text-gray-500 flex items-center gap-1"><Image size={12}/> Lampiran:</span>
-                        <select 
-                          value={newPostImage}
-                          onChange={(e) => setNewPostImage(e.target.value)}
-                          className="bg-gray-900 border border-white/10 rounded-lg py-1 px-2 text-[10px] text-gray-300 focus:outline-none focus:border-cyan-500"
-                        >
-                          <option value="">Tanpa Gambar</option>
-                          <option value="https://images.unsplash.com/photo-1545173168-9f1947eebd01?auto=format&fit=crop&w=600&q=80">🧼 Premium Laundry DryClean</option>
-                          <option value="https://images.unsplash.com/photo-1521791136364-72864753023b?auto=format&fit=crop&w=600&q=80">🤝 Kesepakatan Bisnis Cuan</option>
-                          <option value="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80">📄 Cetakan Kwitansi Premium</option>
-                          <option value="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80">📈 Grafik Keuangan Melesat</option>
-                        </select>
+                    {/* Image URL Input & Preview Section */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        {/* Preset Select */}
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-[10px] font-bold text-gray-500 flex items-center gap-1"><Image size={12}/> Preset Galeri:</span>
+                          <select 
+                            value={newPostImage}
+                            onChange={(e) => setNewPostImage(e.target.value)}
+                            className="bg-gray-900 border border-white/10 rounded-lg py-1.5 px-2 text-[10px] text-gray-300 focus:outline-none focus:border-cyan-500 w-full"
+                          >
+                            <option value="">-- Pilih Galeri Perkembangan --</option>
+                            <option value="https://images.unsplash.com/photo-1545173168-9f1947eebd01?auto=format&fit=crop&w=600&q=80">🧼 Mesin Cuci / Washers Baru</option>
+                            <option value="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80">🏢 Outlet Cabang Baru Terbuka</option>
+                            <option value="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80">📦 Tumpukan Paket Pengiriman</option>
+                            <option value="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80">📈 Grafik Cuan Keuangan Naik</option>
+                            <option value="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80">🤝 Meeting Tim Rapat Sukses</option>
+                            <option value="https://images.unsplash.com/photo-1507133750040-4a8f57021571?auto=format&fit=crop&w=600&q=80">☕ Kopi Pagi Penyemangat Kerja</option>
+                            <option value="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80">📄 Cetakan Kwitansi Fisik</option>
+                          </select>
+                        </div>
+                        
+                        {/* Custom URL Input */}
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-[10px] font-bold text-gray-500">🔗 Link Foto:</span>
+                          <input 
+                            type="text"
+                            value={newPostImage}
+                            onChange={(e) => setNewPostImage(e.target.value)}
+                            placeholder="Atau tempel link foto perkembangan kustom..."
+                            className="bg-gray-900 border border-white/10 rounded-lg py-1.5 px-3 text-[10px] text-white focus:outline-none focus:border-cyan-500 w-full"
+                          />
+                        </div>
                       </div>
-                      
+
+                      {/* Live Image Preview Thumbnail */}
+                      {newPostImage && (
+                        <div className="relative rounded-xl border border-cyan-500/30 overflow-hidden h-28 w-44 bg-black group self-start shadow-md shadow-cyan-500/5 transition-all duration-300">
+                          <img 
+                            src={newPostImage} 
+                            alt="Pratinjau perkembangan" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?auto=format&fit=crop&w=300&q=80';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              type="button"
+                              onClick={() => setNewPostImage('')}
+                              className="bg-red-500 text-white font-bold text-[8px] px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                            >
+                              ✕ Hapus Foto
+                            </button>
+                          </div>
+                          <span className="absolute bottom-1 left-2 text-[7px] font-bold text-white bg-cyan-600/80 px-1 py-0.5 rounded backdrop-blur-sm">
+                            Pratinjau Foto
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end pt-1">
                       <button 
                         type="submit" 
                         disabled={isPublishing || !newPostContent.trim()}
