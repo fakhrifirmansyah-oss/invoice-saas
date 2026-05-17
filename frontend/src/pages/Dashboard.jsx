@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { Plus, FileText, CheckCircle, Clock, TrendingUp, Search, Filter, Cpu, Terminal, Zap, Activity, Send, MessageSquare, Heart, Share2, Image, Sparkles, Globe, MapPin, Navigation, Truck, Tag, Trash2, UserCheck, Map } from 'lucide-react';
+import { Plus, FileText, CheckCircle, Clock, TrendingUp, Search, Filter, Cpu, Terminal, Zap, Activity, Send, MessageSquare, Heart, Share2, Image, Sparkles, Globe, MapPin, Navigation, Truck, Tag, Trash2, UserCheck, Map, Maximize2, Minimize2 } from 'lucide-react';
 import RobotAgent from '../components/RobotAgent';
 
 export default function Dashboard() {
@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [agentLogs, setAgentLogs] = useState([{ type: 'system', text: 'CORTEX-Alpha is standing by. You can talk to me.' }]);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isSocialMaximized, setIsSocialMaximized] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const logsEndRef = useRef(null);
 
@@ -424,7 +425,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-gray-300 font-sans pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#030712] text-gray-300 font-sans pt-24 pb-12 px-4 md:px-8 lg:px-12">
       
       {/* Abstract Background */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
@@ -432,7 +433,7 @@ export default function Dashboard() {
         <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-emerald-600/10 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-[100vw] w-full mx-auto relative z-10">
         
         {/* Header & Actions */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
@@ -575,7 +576,7 @@ export default function Dashboard() {
           )}
 
           {/* Data Table (Right Side) */}
-          <div className={`lg:col-span-${isTerminalOpen ? '2' : '3'} transition-all duration-500 bg-gray-900/50 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[750px]`}>
+          <div className={`lg:col-span-${isTerminalOpen && !isSocialMaximized ? '2' : '3'} transition-all duration-500 bg-gray-900/50 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition-all duration-500 ${isSocialMaximized ? 'h-[1100px]' : 'h-[750px]'}`}>
             
             {/* Tab Navigator */}
             <div className="flex border-b border-white/5 bg-white/[0.01]">
@@ -618,6 +619,18 @@ export default function Dashboard() {
                 }`}
               >
                 <Map size={14} /> Kurir & Ojek 🛵
+              </button>
+              
+              <button 
+                onClick={() => setIsSocialMaximized(!isSocialMaximized)}
+                title={isSocialMaximized ? "Perkecil Panel" : "Perbesar Panel"}
+                className={`px-4 py-3 text-xs font-black transition-all flex items-center justify-center gap-1 border-b-2 border-transparent ${
+                  isSocialMaximized 
+                    ? 'text-red-400 hover:text-red-350 bg-red-500/5' 
+                    : 'text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/5'
+                }`}
+              >
+                {isSocialMaximized ? <Minimize2 size={15} className="animate-pulse" /> : <Maximize2 size={15} />}
               </button>
             </div>
 
@@ -694,11 +707,31 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    <div className="flex justify-end pt-1">
+                    <div className="flex justify-between items-center pt-1 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setIsSocialMaximized(!isSocialMaximized)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all border ${
+                          isSocialMaximized 
+                            ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' 
+                            : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 shadow-lg shadow-cyan-500/5'
+                        }`}
+                      >
+                        {isSocialMaximized ? (
+                          <>
+                            <Minimize2 size={12} className="text-red-400 animate-pulse" /> Perkecil Feed
+                          </>
+                        ) : (
+                          <>
+                            <Maximize2 size={12} className="text-cyan-400" /> Perbesar Feed
+                          </>
+                        )}
+                      </button>
+
                       <button 
                         type="submit" 
                         disabled={isPublishing || !newPostContent.trim()}
-                        className="w-full sm:w-auto group relative inline-flex items-center justify-center px-4 py-2 text-xs font-black text-white bg-cyan-600 rounded-lg overflow-hidden shadow-lg shadow-cyan-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                        className="w-full sm:w-auto group relative inline-flex items-center justify-center px-4 py-2 text-xs font-black text-white bg-cyan-600 rounded-lg overflow-hidden shadow-lg shadow-cyan-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 font-bold"
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <span className="relative flex items-center gap-1"><Sparkles size={12}/> Blast to Orbit</span>
