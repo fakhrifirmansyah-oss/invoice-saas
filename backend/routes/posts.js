@@ -64,6 +64,69 @@ router.post('/', async (req, res) => {
     newPost.author_name = userResult.rows[0].name;
     newPost.comments = [];
 
+    // --- AUTO INTERACT FROM OTHER SEEDED USERS ---
+    try {
+      const seedUsers = await db.query("SELECT id, name FROM users WHERE email IN ('budi.laundry@yopmail.com', 'siti.boutique@yopmail.com', 'rian.print@yopmail.com')");
+      
+      if (seedUsers.rows.length > 0) {
+        const userMap = {};
+        seedUsers.rows.forEach(u => {
+          const lowerName = u.name.toLowerCase();
+          if (lowerName.includes('budi')) userMap['budi'] = u.id;
+          else if (lowerName.includes('siti')) userMap['siti'] = u.id;
+          else if (lowerName.includes('rian')) userMap['rian'] = u.id;
+        });
+
+        const budiId = userMap['budi'];
+        const sitiId = userMap['siti'];
+        const rianId = userMap['rian'];
+
+        const lowerContent = content.toLowerCase();
+
+        // 1. Trigger automatic Likes from community other owners!
+        const mockLikes = Math.floor(Math.random() * 3) + 1; // 1 to 3 likes
+        await db.query("UPDATE posts SET likes_count = likes_count + $1 WHERE id = $2", [mockLikes, newPost.id]);
+        newPost.likes_count = (newPost.likes_count || 0) + mockLikes;
+
+        // 2. Trigger automatic Comments from other owners based on keywords!
+        // Budi Santoso (Laundry Express) comments:
+        if (budiId) {
+          let budiComment = 'Luar biasa Bos! Terus berkarya dan mengorbit bersama FDBAtech! Maju terus wirausaha Indonesia! 🚀';
+          if (lowerContent.match(/(laundry|cuci|londri|setrika|gosok|baju|pakaian)/)) {
+            budiComment = 'Waduh mantap rapi bener Bos usahanya! Kapan-kapan kita kolaborasi yuk antar sesama laundry. Sukses terus! LG Giant Max siap menanti 🧼👕';
+          } else if (lowerContent.match(/(cuan|invoice|uang|pendapatan|omset|kaya)/)) {
+            budiComment = 'Gila keren abis cuannya Bosku! Bikin tambah semangat wirausaha nih! Moga rezeki melimpah terus 💰💸';
+          }
+          await db.query("INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)", [newPost.id, budiId, budiComment]);
+        }
+
+        // Siti Aminah (Amanah DryClean) comments:
+        if (sitiId) {
+          let sitiComment = 'Suka sekali melihat perkembangan bisnis Bos yang sangat inspiratif ini! Sukses selalu! 🌟';
+          if (lowerContent.match(/(laundry|cuci|londri|dryclean|premium)/)) {
+            sitiComment = 'Rapih dan wangi banget pasti hasilnya Bos. Sukses selalu buat outlet barunya! 👔✨';
+          } else if (lowerContent.match(/(kwitansi|cetak|kertas|invoice)/)) {
+            sitiComment = 'Betul Bos! Pakai FDBAtech cetak kwitansi jadi keliatan premium banget, pelanggan butik saya langsung percaya 👍';
+          }
+          await db.query("INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)", [newPost.id, sitiId, sitiComment]);
+        }
+
+        // Rian Hidayat (Rian Print) comments:
+        if (rianId) {
+          let rianComment = 'Sangat mantap Bosku! Terus berkarya dan mengorbit bersama FDBAtech! 👍';
+          if (lowerContent.match(/(kwitansi|cetak|kertas|concorde)/)) {
+            rianComment = 'Wah mantap! Kertas Concorde emang tiada duanya Bos. Keliatan elite banget kwitansinya! 📄🔥';
+          } else if (lowerContent.match(/(cuan|invoice|uang|tagih)/)) {
+            rianComment = 'Mantap Bos! Sistem audit tagihan FDBAtech bikin klien nunggak langsung insyaf bayar lunas hahaha! 😂👍';
+          }
+          await db.query("INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)", [newPost.id, rianId, rianComment]);
+        }
+      }
+    } catch (err) {
+      console.error('Error in community auto-interaction:', err);
+      // Fallback gracefully so main post creation doesn't fail
+    }
+
     res.status(201).json(newPost);
   } catch (error) {
     console.error('Error creating post:', error);

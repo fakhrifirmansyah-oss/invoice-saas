@@ -57,8 +57,88 @@ const createTables = async () => {
       );
     `);
     console.log("Database tables created successfully.");
+
+    // --- SEED MOCK COMMUNITY DATA ---
+    console.log("Seeding mock community users, posts, and comments...");
+    const bcrypt = require('bcrypt');
+    const mockPass = await bcrypt.hash('secret123', 10);
+    
+    // Seed users
+    await pool.query(`
+      INSERT INTO users (name, email, password, is_verified) 
+      VALUES 
+        ('Budi Santoso (Budi Laundry Express)', 'budi.laundry@yopmail.com', '${mockPass}', true),
+        ('Siti Aminah (Amanah DryClean)', 'siti.boutique@yopmail.com', '${mockPass}', true),
+        ('Rian Hidayat (Rian Print & Press)', 'rian.print@yopmail.com', '${mockPass}', true)
+      ON CONFLICT (email) DO NOTHING;
+    `);
+
+    // Check if seeded posts exist (using Budi's ID), then seed them if not present
+    const usersRes = await pool.query("SELECT id, email FROM users WHERE email IN ('budi.laundry@yopmail.com', 'siti.boutique@yopmail.com', 'rian.print@yopmail.com')");
+    const userMap = {};
+    usersRes.rows.forEach(u => {
+      userMap[u.email] = u.id;
+    });
+
+    const budiId = userMap['budi.laundry@yopmail.com'];
+    const sitiId = userMap['siti.boutique@yopmail.com'];
+    const rianId = userMap['rian.print@yopmail.com'];
+
+    if (budiId && sitiId && rianId) {
+      const budiPostExists = await pool.query('SELECT COUNT(*) FROM posts WHERE user_id = $1', [budiId]);
+      if (parseInt(budiPostExists.rows[0].count) === 0) {
+        // Budi post
+        const budiPost = await pool.query(`
+          INSERT INTO posts (user_id, content, image_url, likes_count)
+          VALUES (${budiId}, 'Hari ini armada cuci bertambah lagi! 5 mesin cuci premium LG Giant Max resmi mendarat di outlet cabang Sudirman. Siap melayani ribuan kilogram pakaian pelanggan! 🧼👕', 'https://images.unsplash.com/photo-1545173168-9f1947eebd01?auto=format&fit=crop&w=600&q=80', 12)
+          RETURNING id;
+        `);
+        const budiPostId = budiPost.rows[0].id;
+
+        // Siti post
+        const sitiPost = await pool.query(`
+          INSERT INTO posts (user_id, content, image_url, likes_count)
+          VALUES (${sitiId}, 'Alhamdulillah, testimoni bintang 5 dari pelanggan VIP hari ini! Senang sekali bisa membantu merapikan jas mewah klien dengan cepat dan aman. Pencatatan transaksi di FDBAtech benar-benar mempermudah segalanya! 📈💼', 'https://images.unsplash.com/photo-1521791136364-72864753023b?auto=format&fit=crop&w=600&q=80', 9)
+          RETURNING id;
+        `);
+        const sitiPostId = sitiPost.rows[0].id;
+
+        // Rian post
+        const rianPost = await pool.query(`
+          INSERT INTO posts (user_id, content, image_url, likes_count)
+          VALUES (${rianId}, 'Kwitansi Concorde Premium FDBAtech yang saya cetak kemarin langsung diserahkan ke klien besar. Begitu lihat stempel basah digital Lunas, pembayaran langsung disetujui! Rekomendasi banget buat pengusaha! 📄🚀', 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80', 15)
+          RETURNING id;
+        `);
+        const rianPostId = rianPost.rows[0].id;
+
+        // Seed comments on Budi's post
+        await pool.query(`
+          INSERT INTO comments (post_id, user_id, content)
+          VALUES 
+            (${budiPostId}, ${sitiId}, 'Luar biasa kencang ekspansinya Bos Budi! Kapan-kapan mau mampir ke Sudirman ah 🧼'),
+            (${budiPostId}, ${rianId}, 'Mantap pak! LG Giant Max emang legendaris kuatnya. Semoga usahanya makin jaya!');
+        `);
+
+        // Seed comments on Siti's post
+        await pool.query(`
+          INSERT INTO comments (post_id, user_id, content)
+          VALUES 
+            (${sitiPostId}, ${budiId}, 'Hebat bu Siti! Layanan VIP emang margin paling mantap. Sukses terus ya!'),
+            (${sitiPostId}, ${rianId}, 'Betul bu, catatan keuangan jadi rapi banget sejak pakai FDBAtech.');
+        `);
+
+        // Seed comments on Rian's post
+        await pool.query(`
+          INSERT INTO comments (post_id, user_id, content)
+          VALUES 
+            (${rianPostId}, ${budiId}, 'Gila keren banget! Desain kwitansinya emang terlihat sangat tepercaya.'),
+            (${rianPostId}, ${sitiId}, 'Boleh ditiru nih trik stempel basahnya pak Rian. Hebat!');
+        `);
+        console.log("Mock community data seeded successfully.");
+      }
+    }
   } catch (err) {
-    console.error("Error creating tables", err);
+    console.error("Error creating or seeding tables", err);
   } finally {
     pool.end();
   }
