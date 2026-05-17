@@ -15,12 +15,13 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const user = await UserModel.create(name, email, hashedPassword, 'email', false, verificationToken);
+    // Bypassing verification for local demo: set is_verified to true
+    const user = await UserModel.create(name, email, hashedPassword, 'email', true, verificationToken);
     
-    // Send email asynchronously
+    // Send email asynchronously (mocked locally)
     sendVerificationEmail(user.email, verificationToken);
 
-    return { message: 'Registration successful. Please check your email to verify your account.' };
+    return { message: 'Registration successful. Auto-verified for local development. You can now log in.' };
   }
 
   static async verifyEmail(token) {

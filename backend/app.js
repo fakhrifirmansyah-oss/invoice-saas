@@ -20,4 +20,15 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+
+  // Start the background recurring invoices processor
+  const { processRecurringInvoices } = require('./jobs/recurringInvoices');
+  
+  // Run once immediately on server startup
+  processRecurringInvoices();
+  
+  // Run every 15 minutes
+  setInterval(() => {
+    processRecurringInvoices();
+  }, 15 * 60 * 1000);
 });

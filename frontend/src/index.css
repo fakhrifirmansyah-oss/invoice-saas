@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes scan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(40px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes patrol {
+  0% { right: 20px; }
+  50% { right: calc(100vw - 320px); }
+  100% { right: 20px; }
+}

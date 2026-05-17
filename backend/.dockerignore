@@ -1,0 +1,19 @@
+# ────────────────────────────────────────────────────────
+#  .dockerignore — Backend
+#  Jangan masukkan file ini ke Docker image
+# ────────────────────────────────────────────────────────
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+README.md
+*.md
+.DS_Store
+coverage
+.nyc_output
+dist
+build
+*.log

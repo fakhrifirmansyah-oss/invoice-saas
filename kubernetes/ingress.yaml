@@ -1,0 +1,54 @@
+
+# ────────────────────────────────────────────────────────
+#  Kubernetes Ingress — FDBAtech Load Balancer
+#  GKE Ingress with Google-managed SSL certificate
+# ────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fdbatech-ingress
+  namespace: fdbatech
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "fdbatech-global-ip"
+    networking.gke.io/managed-certificates: "fdbatech-ssl-cert"
+    networking.gke.io/v1beta1.FrontendConfig: "fdbatech-frontend-config"
+spec:
+  rules:
+  - host: "app.fdbatech.com"
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: fdbatech-api-service
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: fdbatech-frontend-service
+            port:
+              number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: fdbatech-ssl-cert
+  namespace: fdbatech
+spec:
+  domains:
+  - app.fdbatech.com
+---
+# Force HTTPS redirect
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: fdbatech-frontend-config
+  namespace: fdbatech
+spec:
+  redirectToHttps:
+    enabled: true
+    responseCodeName: MOVED_PERMANENTLY_DEFAULT
